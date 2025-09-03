@@ -10,7 +10,7 @@ API-сервис предоставляет функциональность д�
 
 ### Клонирование репозитория
 ```bash
-git clone <repository-url>
+git clone https://github.com/1KELER1/Question.git
 ```
 
 ```bash
