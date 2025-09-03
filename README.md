@@ -147,15 +147,6 @@ curl -X DELETE http://localhost:8000/api/questions/1/
 
 ## Запуск тестов
 
-### Все тесты
-```bash
-docker-compose exec web python -m pytest
-```
-
-### С подробным выводом
-```bash
-docker-compose exec web python -m pytest -v
-```
 
 ### Django test runner
 ```bash
