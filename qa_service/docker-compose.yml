@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: qa_db
+      POSTGRES_USER: qa_user
+      POSTGRES_PASSWORD: qa_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: >
+      sh -c "
+        echo 'Checking for migrations...' &&
+        python manage.py makemigrations &&
+        echo 'Applying migrations...' &&
+        python manage.py migrate &&
+        echo 'Checking static files...' &&
+        if [ ! -d /app/staticfiles ] || [ -z "$(ls -A /app/staticfiles)" ]; then
+        echo 'Collecting static files...' &&
+        python manage.py collectstatic --noinput
+        else
+        echo 'Static files already exist'
+        fi &&
+        echo 'Starting Gunicorn...' &&
+        python manage.py runserver 0.0.0.0:8000
+        "
+
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://qa_user:qa_password@postgres:5432/qa_db
+
+volumes:
+  postgres_data:
